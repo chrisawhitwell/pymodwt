@@ -27,10 +27,9 @@ from setuptools import setup, find_packages
 import numpy
 
 
-setup(	name = "wmtsapy3",
+setup(	name = "pymodwt",
 		author = 'Chris Whitwell',
 		author_email = 'chris.whitwell@research.uwa.edu.au',
 		cmdclass = {},
 		packages=find_packages()
 		)
-

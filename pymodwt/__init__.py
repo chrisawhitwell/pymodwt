@@ -127,7 +127,7 @@ class dwtArray(np.ndarray):
         coord_val = list(coord.values())[0]
 
         if type(coord_val[0]) == np.datetime64:
-            tau = np.diff(coord_val).mean().astype('timedelta64[s]').astype('float')
+            tau = np.diff(coord_val).mean().astype('timedelta64[ns]').astype('float')/1e9
         else:
             tau = np.diff(coord_val).mean()
 

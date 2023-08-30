@@ -152,7 +152,6 @@ def modwt(X, wtf='la8', nlevels='conservative', boundary='reflection', RetainVJ=
         VJt = np.ndarray((NW), dtype=np.float64)*np.nan
 
     # Do the MODWT.
-    import pyximport; pyximport.install()
     from .modwtj import modwtj
     Vin = Xin; bw = np.ndarray((J0,2))*np.nan
     for j in range(J0):
@@ -246,9 +245,9 @@ def imodwt_details(WJt):
     """
     
     # Get a the wavelet transform filter coefficients.
-    if type(WJt) is not dwtArray:
+    if type(WJt) != dwtArray:
         raise TypeError('Input must be a dwtArray')
-    if WJt.info['Type'] is not 'Wavelet':
+    if WJt.info['Type'] != 'Wavelet':
         raise TypeError('Input array does not contain Wavelet coefficients but {} coefficients'.format(WJt.info['Type']))
     wtfname = WJt.info['WTF']
     wtf_s   = wtfilter(wtfname)
@@ -264,7 +263,6 @@ def imodwt_details(WJt):
     zeroj = np.zeros(N)
     DJt   = np.zeros((J, N))
 
-    import pyximport; pyximport.install()
     from .modwtj import imodwtj 
     for j in range(J0-1,-1,-1):
         Vin = zeroj
@@ -276,7 +274,7 @@ def imodwt_details(WJt):
         DJt[j,:] = Vout
     
     # boundary values pag.199 WMTSA
-    bw = np.ndarray((J0,2), dtype=np.int16)*np.nan
+    bw = np.ndarray((J0,2), dtype=np.int32)*np.nan
     for j in range(J0):
         #Calculate circularly shifted wavelet coefficient boundary indices at jth level
         L_j     = equivalent_filter_width(L, j+1)
@@ -326,9 +324,9 @@ def imodwt_smooth(VJt):
     """
 
     # Get the wavelet transform filter coefficients.
-    if type(VJt) is not dwtArray:
+    if type(VJt) != dwtArray:
         raise TypeError('Input must be a dwtArray')
-    if VJt.info['Type'] is not 'Scaling':
+    if VJt.info['Type'] != 'Scaling':
         raise TypeError('Input array does not contain Scaling coefficients but {} coefficients'.format(VJt.info['Type']))
     wtfname = VJt.info['WTF']
     J0      = VJt.info['J0']
@@ -350,7 +348,6 @@ def imodwt_smooth(VJt):
 
     Vin = VJt
 
-    import pyximport; pyximport.install()
     from .modwtj import imodwtj
     for j in range(J0-1,-1,-1):
         Vout = imodwtj(zeroj, Vin, j+1, ht, gt)
@@ -409,13 +406,13 @@ def imodwt_mra(WJt, VJt):
     """
 
     # check input
-    if type(WJt) is not dwtArray:
+    if type(WJt) != dwtArray:
         raise TypeError('Input must be a dwtArray')
-    if WJt.info['Type'] is not 'Wavelet':
+    if WJt.info['Type'] != 'Wavelet':
         raise TypeError('First input array does not contain Wavelet coefficients but {} coefficients'.format(WJt.info['Type']))
-    if type(VJt) is not dwtArray:
+    if type(VJt) != dwtArray:
         raise TypeError('Input must be a dwtArray')
-    if VJt.info['Type'] is not 'Scaling':
+    if VJt.info['Type'] != 'Scaling':
         raise TypeError('Second input array does not contain Scaling coefficients but {} coefficients'.format(VJt.info['Type']))
 
     DJt = imodwt_details(WJt)
@@ -457,13 +454,13 @@ def cir_shift(WJt, VJ0t, subtract_mean_VJ0t=True):
     """
     
     # check input
-    if type(WJt) is not dwtArray:
+    if type(WJt) != dwtArray:
         raise TypeError('Input must be a dwtArray')
-    if WJt.info['Type'] is not 'Wavelet':
+    if WJt.info['Type'] != 'Wavelet':
         raise TypeError('First input array does not contain Wavelet coefficients but {} coefficients'.format(WJt.info['Type']))
-    if type(VJ0t) is not dwtArray:
+    if type(VJ0t) != dwtArray:
         raise TypeError('Input must be a dwtArray')
-    if VJ0t.info['Type'] is not 'Scaling':
+    if VJ0t.info['Type'] != 'Scaling':
         raise TypeError('Second input array does not contain Scaling coefficients but {} coefficients'.format(VJ0t.info['Type']))
     
     wtf_s = wtfilter(WJt.info['WTF'])
@@ -577,13 +574,13 @@ def rot_cum_wav_svar(WJt, VJ0t, method='cumsc'):
         raise ValueError('Valid methods are only: "power", "cum" or "cumsc"')
     
     # check input
-    if type(WJt) is not dwtArray:
+    if type(WJt) != dwtArray:
         raise TypeError('Input must be a dwtArray')
-    if WJt.info['Type'] is not 'Wavelet':
+    if WJt.info['Type'] != 'Wavelet':
         raise TypeError('First input array does not contain Wavelet coefficients but {} coefficients'.format(WJt.info['Type']))
-    if type(VJ0t) is not dwtArray:
+    if type(VJ0t) != dwtArray:
         raise TypeError('Input must be a dwtArray')
-    if VJ0t.info['Type'] is not 'Scaling':
+    if VJ0t.info['Type'] != 'Scaling':
         raise TypeError('Second input array does not contain Scaling coefficients but {} coefficients'.format(VJ0t.info['Type']))
             
     # rotate if they are not yet aligned
@@ -679,16 +676,16 @@ def running_wvar(WJt, Ns=3, overlap=False, ci_method='chi2eta3', p=0.05):
     if ci_method.lower() not in valid_ci_methods:
         raise ValueError('Bad C.I. method: "{}". Valid methods for confidence interval are only: {}'.format(ci_method,valid_ci_methods))
         
-    if type(WJt) is not dwtArray:
+    if type(WJt) != dwtArray:
         raise TypeError('Input must be a dwtArray')
-    if WJt.info['Type'] is not 'Wavelet':
+    if WJt.info['Type'] != 'Wavelet':
         raise TypeError('Input array does not contain Wavelet coefficients but {} coefficients'.format(WJt.info['Type']))
     if not WJt.info['Aligned']:
         raise TypeError('Input coefficients must be aligned')
     
     J,N = WJt.shape
 
-    Ns = np.int(Ns)
+    Ns = np.int32(Ns)
     Ns2 = Ns/2
         
     if overlap:
@@ -787,9 +784,9 @@ def wvar(WJt, ci_method='chi2eta3', estimator='biased', p=0.05):
     if estimator.lower() not in valid_estimator_methods:
         raise ValueError('Bad estimator: "{}". Valid estimator methods are only: {}'.format(estimator,valid_estimator_methods))    
         
-    if type(WJt) is not dwtArray:
+    if type(WJt) != dwtArray:
         raise TypeError('Input must be a dwtArray')
-    if WJt.info['Type'] is not 'Wavelet':
+    if WJt.info['Type'] != 'Wavelet':
         raise TypeError('Input array does not contain Wavelet coefficients but {} coefficients'.format(WJt.info['Type']))
     if WJt.info['Aligned'] & (estimator=='unbiased'):
         raise TypeError('The unbiased method required wavelet coefficients not circularly shifted')
@@ -981,12 +978,12 @@ def wvar_ci(wvar, MJ, lbound=None, ubound=None, ci_method='chi2eta3', WJt=None, 
         raise ValueError('Bad C.I. method: "{}". Valid methods for confidence interval are only: {}'.format(ci_method,valid_ci_methods))
 
     # if WJt!=None:        
-    #     if type(WJt) is not dwtArray:
+    #     if type(WJt) != dwtArray:
     #         raise TypeError('Input wavelet coefficients must be a dwtArray')
     #     if WJt.info['Type']!='Wavelet':
     #         raise TypeError('Input array does not contain Wavelet coefficients but {} coefficients'.format(WJt.info['Type']))
     
-    if type(wvar) is not dwtArray:
+    if type(wvar) != dwtArray:
             raise TypeError('Wavelet variance must be a dwtArray')
     if wvar.info['Type']!='MODWT WVAR':
         raise TypeError('Input array does not contain Wavelet Variance but {}'.format(WJt.info['Type']))
@@ -1154,7 +1151,7 @@ def advance_time_series_filter(wtfname):
     else:
         pass
     
-    return np.int16(np.around(nu))
+    return np.int32(np.around(nu))
 
 def advance_wavelet_filter(wtfname, j):
     """
@@ -1351,7 +1348,7 @@ def choose_nlevels(choice, wtfname, N):
         J0 = np.floor(np.log2(1.5 * N))
     else:
         raise ValueError('WMTSA:invalidNLevelsValue: available choices are {}'.format(available_choices))
-    return np.int(J0)
+    return np.int32(J0)
 
 def num_nonboundary_coef(wtfname, N, j):
     """
@@ -1386,7 +1383,7 @@ def num_nonboundary_coef(wtfname, N, j):
     
     L = wtf.L
     
-    N = np.int(N); j = np.int32(j)
+    N = np.int32(N); j = np.int32(j)
      
     # Calculate MJ
     Lj = equivalent_filter_width(L, j)
